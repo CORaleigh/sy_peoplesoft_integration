@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sy:switchyard xmlns:bean="urn:switchyard-component-bean:config:2.0" xmlns:quartz="urn:switchyard-component-camel-quartz:config:2.0" xmlns:resteasy="urn:switchyard-component-resteasy:config:2.0" xmlns:sca="http://docs.oasis-open.org/ns/opencsa/sca/200912" xmlns:sy="urn:switchyard-config:switchyard:2.0" name="peoplesoft-integration" targetNamespace="urn:gov.raleighnc.switchyard.integration.service.peoplesoft:peoplesoft-integration:1.0">
+  <sca:composite name="peoplesoft-integration" targetNamespace="urn:gov.raleighnc.switchyard.integration.service.peoplesoft:peoplesoft-integration:1.0">
+    <sca:component name="PsftCwDataTransferServiceBean">
+      <bean:implementation.bean class="gov.raleighnc.switchyard.integration.service.peoplesoft.peoplesoft_integration.PsftCwDataTransferServiceBean"/>
+      <sca:service name="PsftCwDataTransferService">
+        <sca:interface.java interface="gov.raleighnc.switchyard.integration.service.peoplesoft.peoplesoft_integration.PsftCwDataTransferService"/>
+      </sca:service>
+      <sca:reference name="PsftService">
+        <sca:interface.java interface="gov.raleighnc.switchyard.integration.service.peoplesoft.peoplesoft_integration.PsftService"/>
+      </sca:reference>
+    </sca:component>
+    <sca:service name="PsftCwDataTransferService" promote="PsftCwDataTransferServiceBean/PsftCwDataTransferService">
+      <sca:interface.java interface="gov.raleighnc.switchyard.integration.service.peoplesoft.peoplesoft_integration.PsftCwDataTransferService"/>
+      <quartz:binding.quartz name="PsftCwDataTransferService1">
+        <sy:operationSelector operationName="updateCwMaterials"/>
+        <quartz:name>PsftCwDataTransferServiceTest</quartz:name>
+        <quartz:cron>0 * * * * ?</quartz:cron>
+      </quartz:binding.quartz>
+    </sca:service>
+    <sca:reference name="PsftService" multiplicity="0..1" promote="PsftCwDataTransferServiceBean/PsftService">
+      <sca:interface.java interface="gov.raleighnc.switchyard.integration.service.peoplesoft.peoplesoft_integration.PsftService"/>
+      <resteasy:binding.rest name="PsftRestInterface">
+        <resteasy:interfaces>gov.raleighnc.switchyard.integration.service.peoplesoft.peoplesoft_integration.PsftRestInterface</resteasy:interfaces>
+        <resteasy:address>http://findevapp1.ci.raleigh.nc.us:8200/PSIGW/RESTListeningConnector/COR_MAST_ITEM_CHK_GET.v1</resteasy:address>
+        <resteasy:timeout>10000</resteasy:timeout>
+      </resteasy:binding.rest>
+    </sca:reference>
+  </sca:composite>
+</sy:switchyard>
